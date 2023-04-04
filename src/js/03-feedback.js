@@ -12,29 +12,33 @@ restoreFormData();
 formEl.addEventListener('input', throttle(saveFormData, 500));
 formEl.addEventListener('submit', submitForm);
 
-function saveFormData() {
-  formData.email = emailFieldEl.value;
-  formData.message = messageFieldEl.value;
+function saveFormData(e) {
+  formData[e.target.name] = e.target.value;
   storageData = JSON.stringify(formData);
   localStorage.setItem(STORAGE, storageData);
 }
 
 function restoreFormData() {
   storageData = localStorage.getItem(STORAGE);
-  if (storageData) {
-    formData = JSON.parse(storageData);
-    emailFieldEl.value = formData.email;
-    messageFieldEl.value = formData.message;
+  if (!storageData) {
+    return;
+  }
+  formData = JSON.parse(storageData);
+  for (const element of formEl.elements) {
+    if (formData[element.name]) {
+      element.value = formData[element.name];
+    }
   }
 }
 
 function submitForm(e) {
   e.preventDefault();
-  if (!emailFieldEl.value) {
-    alert('Вкажіть електронну адресу для підписки');
+  if (!emailFieldEl.value || !messageFieldEl.value) {
+    alert('Необхідно заповнити всі поля форми');
     return;
   }
   console.log(formData);
   formEl.reset();
+  formData = {};
   localStorage.removeItem(STORAGE);
 }
