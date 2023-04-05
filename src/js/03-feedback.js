@@ -24,12 +24,10 @@ function restoreFormData() {
     return;
   }
   formData = JSON.parse(storageData);
-  for (const element of formEl.elements) {
-    if (formData[element.name]) {
-      element.value = formData[element.name];
-    }
+  for (const element in formData) { 
+    formEl[element].value = formData[element];
   }
-}
+  }
 
 function submitForm(e) {
   e.preventDefault();
